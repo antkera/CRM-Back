@@ -14,6 +14,9 @@ router.use("/user", isTokenValid, userRoutes);
 const clientRoutes = require("./Client/client.routes.js");
 router.use("/client", isTokenValid, clientRoutes)
 
+const invoiceRoutes = require("./Invoice/invoice.routes.js");
+router.use("/Invoices", isTokenValid, invoiceRoutes)
+
 // const uploadRoutes = require("./upload.routes");
 // router.use("/upload",isTokenValid, uploadRoutes);
 

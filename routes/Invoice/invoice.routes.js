@@ -6,6 +6,27 @@ const isTokenValid = require('../../middlewares/auth.middlewares');
 
 
 
+// GET "/api/invoices/excel" => Ruta para obtener facturas filtradas por mes y año
+router.get('/excel', isTokenValid, async (req, res) => {
+  const { month, year } = req.query;
+console.log("aqui estoy")
+  try {
+    // Filtramos las facturas por mes y año
+    const startDate = new Date(year, month - 1, 1); // Primer día del mes
+    const endDate = new Date(year, month, 0, 23, 59, 59); // Último día del mes
+
+    const invoices = await Invoice.find({
+      date: { $gte: startDate, $lt: endDate }
+    }).populate('client'); // Suponiendo que 'client' es una referencia a otra colección
+
+      console.log(invoices[0])
+    res.status(201).json(invoices);
+  } catch (error) {
+    console.error('Error al obtener facturas filtradas:', error);
+    res.status(500).json({ message: 'Error al obtener facturas filtradas' });
+  }
+});
+
 
 // POST "/api/invoices" => Crear una nueva factura y asignarla al usuario
 router.post('/', isTokenValid, async (req, res, next) => {

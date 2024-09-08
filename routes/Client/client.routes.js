@@ -7,7 +7,6 @@ const { body, validationResult } = require("express-validator");
 // Middleware de validación para la creación y actualización de clientes
 const clientValidation = [
   body("nombre").notEmpty().withMessage("El nombre es requerido"),
-  body("apellidos").notEmpty().withMessage("Los apellidos son requeridos"),
   body("dni")
     .matches(/^([0-9]{8}[A-Z])|([A-Z][0-9]{7}[0-9A-Z])$/)
     .withMessage(

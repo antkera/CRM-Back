@@ -8,14 +8,13 @@ const ClientSchema = new mongoose.Schema({
   },
   apellidos: {
     type: String,
-    required: true
   },
   dni: {
     type: String,
     required: true,
     match: [
-      /^([0-9]{8}[A-Z])|([A-Z][0-9]{7}[0-9A-Z])$/, 
-      'El campo debe ser un DNI válido (8 dígitos + letra) o un CIF válido (letra + 7 dígitos + dígito/letra)'
+      /^([0-9]{8}[A-Z])|([A-Z]-?[0-9]{6,7}-?[0-9A-Z])$/, 
+      'El campo debe ser un DNI válido (8 dígitos + letra) o un CIF válido (letra + 6 ó 7 dígitos + dígito/letra)'
     ]
   },
   direccion: {
@@ -33,7 +32,6 @@ const ClientSchema = new mongoose.Schema({
   },
   hijos: {
     type: [String],
-    required: true
   }
 });
 

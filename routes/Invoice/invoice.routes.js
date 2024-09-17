@@ -104,17 +104,20 @@ router.get('/:id', isTokenValid, async (req, res, next) => {
 // PUT "/api/invoices/:id" => Actualizar una factura específica
 router.put('/:id', isTokenValid, async (req, res, next) => {
   const { id } = req.params;
-  const { invoiceNumber, client, concepts, invoiceDate } = req.body;
+  const { invoiceNumber, client, concepts } = req.body;
   const userId = req.payload._id;
+  const date = new Date(req.body.invoiceDate);
+  console.log(date)
 
   try {
     const total = concepts.reduce((acc, concept) => acc + concept.quantity * concept.price, 0);
 
     const updatedInvoice = await Invoice.findOneAndUpdate(
       { _id: id, user: userId },
-      { invoiceNumber, client, concepts, invoiceDate, total },
+      { invoiceNumber, client, concepts, date, total },
       { new: true }
     );
+    console.log(updatedInvoice.date)
 
     if (!updatedInvoice) {
       return res.status(404).json({ message: 'Factura no encontrada o no tienes permiso para actualizarla' });

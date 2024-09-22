@@ -15,7 +15,7 @@ router.get("/excel", isTokenValid, async (req, res) => {
 
     const invoices = await Invoice.find({
       date: { $gte: startDate, $lt: endDate },
-    }).populate("client"); // Suponiendo que 'client' es una referencia a otra colección
+    }).populate("client");
 
     res.status(201).json(invoices);
   } catch (error) {
@@ -26,39 +26,18 @@ router.get("/excel", isTokenValid, async (req, res) => {
 
 // POST "/api/invoices" => Crear una nueva factura y asignarla al usuario
 router.post("/", isTokenValid, async (req, res, next) => {
-  const {
-    prefix,
-    invoiceNumber,
-    client,
-    concepts,
-    invoiceDate,
-    ivaPercentage,
-    ivaAmount,
-    retentionPercentage,
-    retentionAmount,
-  } = req.body;
+  const { prefix, invoiceNumber, client, concepts, invoiceDate } = req.body;
   const userId = req.payload._id;
-
   const date = new Date(invoiceDate);
 
   try {
-    // // Calcular el total de la factura
-    // const total = concepts.reduce(
-    //   (acc, concept) => acc + concept.quantity * concept.price,
-    //   0
-    // );
-
     // Crear la nueva factura
     const newInvoice = new Invoice({
       invoiceNumber,
       prefix,
       date,
       client,
-      concepts,
-      ivaPercentage,
-      ivaAmount,
-      retentionPercentage,
-      retentionAmount,
+      concepts, // El middleware del modelo se encargará de calcular el subtotal, IVA y retenciones
       user: userId, // Asignar la factura al usuario que la crea
     });
 
@@ -120,25 +99,11 @@ router.get("/:id", isTokenValid, async (req, res, next) => {
 // PUT "/api/invoices/:id" => Actualizar una factura específica
 router.put("/:id", isTokenValid, async (req, res, next) => {
   const { id } = req.params;
-  const {
-    invoiceNumber,
-    client,
-    concepts,
-    prefix,
-    ivaPercentage,
-    ivaAmount,
-    retentionPercentage,
-    retentionAmount,
-  } = req.body;
+  const { invoiceNumber, client, concepts, prefix, invoiceDate } = req.body;
   const userId = req.payload._id;
-  const date = new Date(req.body.invoiceDate);
+  const date = new Date(invoiceDate);
 
   try {
-    // const total = concepts.reduce(
-    //   (acc, concept) => acc + concept.quantity * concept.price,
-    //   0
-    // );
-
     const updatedInvoice = await Invoice.findOneAndUpdate(
       { _id: id, user: userId },
       {
@@ -146,11 +111,7 @@ router.put("/:id", isTokenValid, async (req, res, next) => {
         prefix,
         date,
         client,
-        concepts,
-        ivaPercentage,
-        ivaAmount,
-        retentionPercentage,
-        retentionAmount,
+        concepts, // El middleware se encargará de recalcular los montos
       },
       { new: true }
     );

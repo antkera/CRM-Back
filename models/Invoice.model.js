@@ -46,7 +46,7 @@ const InvoiceSchema = new mongoose.Schema({
 
   subtotal: {
     type: Number,
-    required: true,
+    
   },
 
   ivaAmount: {
@@ -63,7 +63,7 @@ const InvoiceSchema = new mongoose.Schema({
 
   total: {
     type: Number,
-    required: true,
+    
   },
 });
 
